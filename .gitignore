@@ -1,0 +1,42 @@
+# 데이터 파일 (용량 초과 + 대회 규정)
+train.csv
+test.csv
+sample_submission.csv
+
+# 모델/예측 파일 (용량 초과)
+results/
+*.pkl
+*.npy
+
+# 제출 파일
+submission_*.csv
+FINAL_*.csv
+KK*.csv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# 임시 파일
+/tmp/
+*.log
+*_out.txt
+
+# 기타 실험 스크립트 (핵심만 포함)
+analyze_*.py
+build_*.py
+train_*.py
+physics_*.py
+alpha_*.py
+adversarial_*.py
+hp_*.py
+layout_*.py
+meta_*.py
+pack_*.py
+poisson_*.py
+pseudo_*.py
+ranking_*.py
+scenario_*.py
+cascade_*.py
