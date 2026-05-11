@@ -15,7 +15,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 import pickle, os
 import numpy as np, pandas as pd
 
-ROOT = r"C:\Users\user\Desktop\데이콘 4월"
+ROOT = "."
 OUT  = os.path.join(ROOT, "results", "eda_v31")
 os.makedirs(OUT, exist_ok=True)
 
