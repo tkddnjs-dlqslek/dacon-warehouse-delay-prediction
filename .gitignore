@@ -1,6 +1,7 @@
 # 데이터 파일 (용량 초과 + 대회 규정)
 train.csv
 test.csv
+layout_info.csv
 sample_submission.csv
 
 # 모델/예측 파일 (용량 초과)
@@ -23,11 +24,10 @@ __pycache__/
 /tmp/
 *.log
 *_out.txt
+executed.ipynb
 
-# 기타 실험 스크립트 (핵심만 포함)
+# 기타 실험 스크립트 (250+개 ablation, 핵심만 포함)
 analyze_*.py
-build_*.py
-train_*.py
 physics_*.py
 alpha_*.py
 adversarial_*.py
@@ -40,3 +40,40 @@ pseudo_*.py
 ranking_*.py
 scenario_*.py
 cascade_*.py
+check_*.py
+eval_*.py
+explore_*.py
+export_*.py
+debug_*.py
+fix_*.py
+verify_*.py
+optimize_*.py
+refine_*.py
+scan_*.py
+static_*.py
+temporal_*.py
+tweedie_*.py
+
+# train_*.py 핵심 18개는 명시적 트래킹 (아래 ! 예외)
+train_*.py
+!train_v23.py
+!train_v24.py
+!train_v26.py
+!train_mlp.py
+!train_mlp2.py
+!train_cnn.py
+!train_domain_aug.py
+!train_offset.py
+!train_mlp_army.py
+!train_neural_army.py
+!train_mega_stacking.py
+!train_ranking.py
+!train_oracle_v2.py
+!train_oracle_log.py
+!train_oracle_xgb.py
+!train_oracle_log_v2.py
+!train_oracle_remaining.py
+
+# build_*.py 핵심만 트래킹
+build_*.py
+!build_fe_v31.py
