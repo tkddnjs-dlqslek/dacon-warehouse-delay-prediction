@@ -94,11 +94,13 @@ oracle_NEW = 0.64×FIXED + 0.12×oracle_xgb + 0.16×oracle_lv2 + 0.08×oracle_re
 
 ---
 
-## 재현 방법 (★ 노트북 1개로 끝)
+## 재현 방법 (★ 노트북 1개 only, 완전 self-contained)
 
-### 통합 노트북
+### 통합 노트북 1개
 
-**`스마트_창고 출고 지연 예측 _ Mega33 앙상블 + Sequential Oracle (학습코드 포함).ipynb`** 1개로 모든 학습 + 추론 + CSV 생성.
+**`스마트_창고 출고 지연 예측 _ Mega33 앙상블 + Sequential Oracle (학습코드 포함).ipynb`** 단 하나로 EDA + 33-base 학습 + stacking + ranking + pseudo + oracle + blend + 최종 CSV 생성까지 전부.
+
+**외부 .py 의존 0개** — 모든 학습 스크립트가 셀로 인라인됨 (Phase 0 EDA 코드도 포함).
 
 **필요 입력 (4개, 모두 대회 데이터셋):**
 - `train.csv`
@@ -121,14 +123,15 @@ oracle_NEW = 0.64×FIXED + 0.12×oracle_xgb + 0.16×oracle_lv2 + 0.08×oracle_re
 3. submission_oracle_NEW_OOF8.3825.csv 생성 (1~2분)
 ```
 
-#### B. 처음부터 학습 (Part 1+2, 5~10시간)
+#### B. 처음부터 학습 (Part 1+2, 5~10시간) — 진짜 무인도 시나리오
 
 ```
-1. 빈 폴더에 통합 노트북 + 4개 CSV 배치
+1. 빈 폴더에 통합 노트북 + 4개 CSV 배치 (외부 .py 일체 불필요)
 2. 노트북 셀 순서대로 전체 실행 (Restart & Run All)
-3. Phase 0 (EDA cache 자동 생성) → Phase A~E 학습 → submission CSV
+3. Phase 0 (EDA cache 자동 생성, 8분) → Phase A~E 학습 (5~10h) → submission CSV
 
 인터넷 연결 불필요 (오프라인 실행 가능).
+검증: Phase 0 단독 실행 통과 (무인도_검증/ 폴더에 노트북+4CSV만으로 v30/v31 cache 정상 생성)
 ```
 
 ### 노트북 구조 (Part 1 / Phase A~E)
@@ -164,33 +167,39 @@ torch          # neural army용
 ## 저장소 구조
 
 ```
+★ 메인 — 노트북 1개 only로 모든 것 (외부 .py 의존 0)
 ├── 스마트_창고 출고 지연 예측 _ Mega33 앙상블 + Sequential Oracle (학습코드 포함).ipynb
-│                                # ★ 통합 노트북 (Phase A~E + 즉시 재현)
+│   ├── Phase 0: EDA cache 생성 (engineer_features_v23 + build_fe_v31 인라인)
+│   ├── Phase A1~A3: v23 / v24 / v26 GBDT base (17개)
+│   ├── Phase B1~B7: MLP / CNN / Domain / Offset / mlp_army / neural_army (16개)
+│   ├── Phase C1a~C3: mega33 stacking + ranking + pseudo
+│   ├── Phase D0~D3: Oracle Sequential 5종
+│   ├── Phase E1: 최종 블렌드 → submission CSV
+│   └── Part 2: base64 디코드 (1~2분 즉시 재현용)
 │
-├── 학습 스크립트 20개 (통합 노트북 안에 모두 들어있음, 단독 실행도 가능)
-│   ├── Phase A: train_v23.py / train_v24.py / train_v26.py
-│   ├── Phase B: train_mlp.py / train_mlp2.py / train_cnn.py
-│   │           train_domain_aug.py / train_offset.py
-│   │           train_mlp_army.py / train_neural_army.py
-│   ├── Phase C: train_mega_stacking.py / retrain_mega33_v31.py
-│   │           train_ranking.py / iterative_pseudo.py
-│   ├── Phase D: train_oracle_v2.py / train_oracle_log.py
-│   │           train_oracle_xgb.py / train_oracle_log_v2.py / train_oracle_remaining.py
-│   └── Phase E: final_multi_blend.py
+── 단독 .py 스크립트 (참고용, 노트북에 모두 인라인됨 — 단독 실행도 가능)
+├── train_v23.py / train_v24.py / train_v26.py
+├── train_mlp.py / train_mlp2.py / train_cnn.py
+├── train_domain_aug.py / train_offset.py
+├── train_mlp_army.py / train_neural_army.py
+├── train_mega_stacking.py / retrain_mega33_v31.py
+├── train_ranking.py / iterative_pseudo.py
+├── train_oracle_v2.py / train_oracle_log.py
+├── train_oracle_xgb.py / train_oracle_log_v2.py / train_oracle_remaining.py
+├── final_multi_blend.py
+├── build_fe_v31.py              # v31 feature engineering (노트북 Phase 0에 인라인됨)
 │
-├── build_fe_v31.py              # v31 feature engineering cache 생성
+── 기타
 ├── code_share/solution.ipynb    # (deprecated) 학습 코드 없는 초기 버전 — 통합본 사용 권장
-├── make_best_submission.py      # 별도 entry point (CLI, 통합 노트북과 동일 결과)
+├── make_best_submission.py      # 별도 entry point (CLI)
 ├── requirements.txt
-│
 ├── src/
 │   ├── temporal_oracle.py       # 실패한 Temporal CV 실험 (참고용)
 │   ├── temporal_oracle_v2.py    # + M/M/1 피처 (참고용)
-│   └── v32_quick_test.py        # 신규 피처 빠른 검증용
-│
+│   └── v32_quick_test.py
 └── docs/
-    ├── pipeline.md              # 파이프라인 상세 + 인덱스 주의사항
-    └── analysis.md              # 주요 의사결정 근거
+    ├── pipeline.md
+    └── analysis.md
 ```
 
 ---
