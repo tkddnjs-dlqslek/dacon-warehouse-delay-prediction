@@ -190,16 +190,14 @@ torch          # neural army용
 ├── build_fe_v31.py              # v31 feature engineering (노트북 Phase 0에 인라인됨)
 │
 ── 기타
-├── code_share/solution.ipynb    # (deprecated) 학습 코드 없는 초기 버전 — 통합본 사용 권장
-├── make_best_submission.py      # 별도 entry point (CLI)
 ├── requirements.txt
 ├── src/
 │   ├── temporal_oracle.py       # 실패한 Temporal CV 실험 (참고용)
 │   ├── temporal_oracle_v2.py    # + M/M/1 피처 (참고용)
 │   └── v32_quick_test.py
 └── docs/
-    ├── pipeline.md
-    └── analysis.md
+    ├── pipeline.md              # 파이프라인 상세
+    └── analysis.md              # 의사결정 근거
 ```
 
 ---
