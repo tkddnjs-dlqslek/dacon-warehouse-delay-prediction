@@ -25,6 +25,9 @@ __pycache__/
 *.log
 *_out.txt
 executed.ipynb
+_*.py
+_*.txt
+_nb*.txt
 
 # 기타 실험 스크립트 (250+개 ablation, 핵심만 포함)
 analyze_*.py
