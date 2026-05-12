@@ -175,7 +175,7 @@ for fold_idx, (tr_idx, val_idx) in enumerate(folds):
     clf = lgb.LGBMClassifier(
         n_estimators=500, learning_rate=0.05, num_leaves=31,
         max_depth=6, min_child_samples=50, subsample=0.7, colsample_bytree=0.7,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     clf.fit(train_fe[all_cols].iloc[tr_idx], y_cls[tr_idx],
             eval_set=[(train_fe[all_cols].iloc[val_idx], y_cls[val_idx])],
             callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -290,7 +290,7 @@ oofs['Tuned_Huber'], tests_dict['Tuned_Huber'] = train_5fold(
     lambda: lgb.LGBMRegressor(
         objective='huber', n_estimators=5000,
         **{k: v for k, v in best_params.items()},
-        random_state=SEED, verbose=-1, n_jobs=-1),
+        random_state=SEED, verbose=-1, n_jobs=4),
     y_log, np.expm1, 'Tuned_Huber(log)')
 
 # 2. 기존 HP LGB_Huber (baseline 비교)
@@ -300,7 +300,7 @@ oofs['Base_Huber'], tests_dict['Base_Huber'] = train_5fold(
         num_leaves=63, max_depth=8, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7,
         reg_alpha=1.0, reg_lambda=1.0,
-        random_state=SEED, verbose=-1, n_jobs=-1),
+        random_state=SEED, verbose=-1, n_jobs=4),
     y_log, np.expm1, 'Base_Huber(log)')
 
 # 3. XGB (기존 HP, log)
@@ -309,7 +309,7 @@ oofs['XGB'], tests_dict['XGB'] = train_5fold(
         objective='reg:absoluteerror', n_estimators=5000, learning_rate=0.03,
         max_depth=7, min_child_weight=10, subsample=0.7, colsample_bytree=0.7,
         reg_alpha=1.0, reg_lambda=1.0, tree_method='hist',
-        random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=200),
+        random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=200),
     y_log, np.expm1, 'XGB(log)')
 
 # 4. CatBoost (기존 HP, log)
@@ -318,7 +318,7 @@ oofs['CatBoost'], tests_dict['CatBoost'] = train_5fold(
         loss_function='MAE', eval_metric='MAE',
         iterations=5000, learning_rate=0.03, depth=7,
         l2_leaf_reg=5.0, random_strength=1.0, bagging_temperature=1.0,
-        random_seed=SEED, verbose=0, early_stopping_rounds=200),
+        random_seed=SEED, verbose=0, early_stopping_rounds=200, thread_count=4, task_type='CPU'),
     y_log, np.expm1, 'CatBoost(log)')
 
 # 5. LGB DART (다양성)
@@ -328,7 +328,7 @@ oofs['DART'], tests_dict['DART'] = train_5fold(
         learning_rate=0.03, num_leaves=63, max_depth=8,
         min_child_samples=50, subsample=0.7, colsample_bytree=0.7,
         reg_alpha=1.0, reg_lambda=1.0, drop_rate=0.1,
-        random_state=SEED, verbose=-1, n_jobs=-1),
+        random_state=SEED, verbose=-1, n_jobs=4),
     y_log, np.expm1, 'DART(log)')
 
 # 6. Tuned Huber + sqrt target
@@ -336,7 +336,7 @@ oofs['Tuned_sqrt'], tests_dict['Tuned_sqrt'] = train_5fold(
     lambda: lgb.LGBMRegressor(
         objective='huber', n_estimators=5000,
         **{k: v for k, v in best_params.items()},
-        random_state=SEED, verbose=-1, n_jobs=-1),
+        random_state=SEED, verbose=-1, n_jobs=4),
     y_sqrt, lambda x: np.clip(x, 0, None)**2, 'Tuned_Huber(sqrt)')
 
 # 7. Tuned Huber + power0.25 target
@@ -344,7 +344,7 @@ oofs['Tuned_pow'], tests_dict['Tuned_pow'] = train_5fold(
     lambda: lgb.LGBMRegressor(
         objective='huber', n_estimators=5000,
         **{k: v for k, v in best_params.items()},
-        random_state=SEED, verbose=-1, n_jobs=-1),
+        random_state=SEED, verbose=-1, n_jobs=4),
     y_pow, lambda x: np.clip(x, 0, None)**4 - 1, 'Tuned_Huber(pow0.25)')
 
 pickle.dump({'oofs': oofs, 'tests': tests_dict}, open(f'{RESULT_DIR}/v26_phase2.pkl', 'wb'))

@@ -203,7 +203,7 @@ for mtype, mname in [('lgb_huber', 'LGB_Huber'), ('xgb', 'XGB'), ('cb', 'CatBoos
                 num_leaves=31, max_depth=6, min_child_samples=20,
                 subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0,
-                random_state=SEED, verbose=-1, n_jobs=-1)
+                random_state=SEED, verbose=-1, n_jobs=4)
             model.fit(X_sc[tr_idx], y_sc_log[tr_idx],
                       eval_set=[(X_sc[val_idx], y_sc_log[val_idx])],
                       callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -212,14 +212,14 @@ for mtype, mname in [('lgb_huber', 'LGB_Huber'), ('xgb', 'XGB'), ('cb', 'CatBoos
                 objective='reg:absoluteerror', n_estimators=3000, learning_rate=0.03,
                 max_depth=5, min_child_weight=5, subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0, tree_method='hist',
-                random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=100)
+                random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=100)
             model.fit(X_sc[tr_idx], y_sc_log[tr_idx],
                       eval_set=[(X_sc[val_idx], y_sc_log[val_idx])], verbose=0)
         elif mtype == 'cb':
             model = CatBoostRegressor(
                 loss_function='MAE', iterations=3000, learning_rate=0.03,
                 depth=5, l2_leaf_reg=5.0,
-                random_seed=SEED, verbose=0, early_stopping_rounds=100)
+                random_seed=SEED, verbose=0, early_stopping_rounds=100, thread_count=4, task_type='CPU')
             model.fit(X_sc[tr_idx], y_sc_log[tr_idx],
                       eval_set=(X_sc[val_idx], y_sc_log[val_idx]), verbose=0)
         oof[val_idx] = np.expm1(model.predict(X_sc[val_idx]))
@@ -293,20 +293,20 @@ for mtype, mname in [('lgb_huber', 'LGB_Huber'), ('lgb_mae', 'LGB_MAE'), ('xgb',
                 num_leaves=63, max_depth=8, min_child_samples=50,
                 subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0,
-                random_state=SEED, verbose=-1, n_jobs=-1)
+                random_state=SEED, verbose=-1, n_jobs=4)
         elif mtype == 'lgb_mae':
             model = lgb.LGBMRegressor(
                 objective='mae', n_estimators=5000, learning_rate=0.03,
                 num_leaves=63, max_depth=8, min_child_samples=50,
                 subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0,
-                random_state=SEED, verbose=-1, n_jobs=-1)
+                random_state=SEED, verbose=-1, n_jobs=4)
         elif mtype == 'xgb':
             model = xgb.XGBRegressor(
                 objective='reg:absoluteerror', n_estimators=5000, learning_rate=0.03,
                 max_depth=7, min_child_weight=10, subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0, tree_method='hist',
-                random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=200)
+                random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=200)
             model.fit(X_off[tr_idx], y_offset[tr_idx],
                       eval_set=[(X_off[val_idx], y_offset[val_idx])], verbose=0)
             oof[val_idx] = model.predict(X_off[val_idx])
@@ -413,7 +413,7 @@ tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = lgb.LGBMRegressor(objective='mae', n_estimators=500, learning_rate=0.05,
                            num_leaves=15, max_depth=4, min_child_samples=100,
-                           random_state=SEED, verbose=-1, n_jobs=-1)
+                           random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])
@@ -430,7 +430,7 @@ tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = xgb.XGBRegressor(objective='reg:absoluteerror', n_estimators=500, learning_rate=0.05,
                           max_depth=4, min_child_weight=100, subsample=0.8, colsample_bytree=0.8,
-                          tree_method='hist', random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=50)
+                          tree_method='hist', random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=50)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])], verbose=0)
     oof[val_idx] = np.expm1(m.predict(stack_train[val_idx]))
@@ -445,7 +445,7 @@ oof = np.zeros(len(y))
 tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = CatBoostRegressor(loss_function='MAE', iterations=500, learning_rate=0.05,
-                           depth=4, l2_leaf_reg=5, random_seed=SEED, verbose=0, early_stopping_rounds=50)
+                           depth=4, l2_leaf_reg=5, random_seed=SEED, verbose=0, early_stopping_rounds=50, thread_count=4, task_type='CPU')
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=(stack_train[val_idx], y_log[val_idx]), verbose=0)
     oof[val_idx] = np.expm1(m.predict(stack_train[val_idx]))

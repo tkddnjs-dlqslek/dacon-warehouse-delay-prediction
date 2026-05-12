@@ -81,7 +81,7 @@ PARAMS_RANK = dict(
     subsample=0.7,
     colsample_bytree=0.7,
     reg_alpha=1.0, reg_lambda=1.0,
-    random_state=42, verbose=-1, n_jobs=-1,
+    random_state=42, verbose=-1, n_jobs=4,
     label_gain=list(range(25)),  # linear gain
 )
 

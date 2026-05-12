@@ -213,7 +213,7 @@ for fold_idx, (tr_idx, val_idx) in enumerate(folds):
         n_estimators=500, learning_rate=0.05, num_leaves=31,
         max_depth=6, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     clf.fit(X_cls.iloc[tr_idx], y_cls[tr_idx],
             eval_set=[(X_cls.iloc[val_idx], y_cls[val_idx])],
             callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -243,7 +243,7 @@ sel_model = lgb.LGBMRegressor(
     num_leaves=63, max_depth=8, min_child_samples=50,
     subsample=0.7, colsample_bytree=0.7,
     reg_alpha=1.0, reg_lambda=1.0,
-    random_state=SEED, verbose=-1, n_jobs=-1)
+    random_state=SEED, verbose=-1, n_jobs=4)
 sel_model.fit(train_fe[all_feature_cols].iloc[tr_idx], y_log[tr_idx],
               eval_set=[(train_fe[all_feature_cols].iloc[val_idx], y_log[val_idx])],
               callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -265,7 +265,7 @@ for N in [100, 120, 130, 150, 180]:
         num_leaves=63, max_depth=8, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7,
         reg_alpha=1.0, reg_lambda=1.0,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(train_fe[sel_feats].iloc[tr_idx], y_log[tr_idx],
           eval_set=[(train_fe[sel_feats].iloc[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -337,7 +337,7 @@ for mtype, mname in models_config:
                 num_leaves=63, max_depth=8, min_child_samples=50,
                 subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0,
-                random_state=SEED, verbose=-1, n_jobs=-1)
+                random_state=SEED, verbose=-1, n_jobs=4)
             model.fit(X.iloc[tr_idx], y_log[tr_idx],
                       eval_set=[(X.iloc[val_idx], y_log[val_idx])],
                       callbacks=[lgb.early_stopping(200, verbose=False), lgb.log_evaluation(0)])
@@ -347,7 +347,7 @@ for mtype, mname in models_config:
                 num_leaves=63, max_depth=8, min_child_samples=50,
                 subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0,
-                random_state=SEED, verbose=-1, n_jobs=-1)
+                random_state=SEED, verbose=-1, n_jobs=4)
             model.fit(X.iloc[tr_idx], y_log[tr_idx],
                       eval_set=[(X.iloc[val_idx], y_log[val_idx])],
                       callbacks=[lgb.early_stopping(200, verbose=False), lgb.log_evaluation(0)])
@@ -356,7 +356,7 @@ for mtype, mname in models_config:
                 objective='reg:absoluteerror', n_estimators=5000, learning_rate=0.03,
                 max_depth=7, min_child_weight=10, subsample=0.7, colsample_bytree=0.7,
                 reg_alpha=1.0, reg_lambda=1.0, tree_method='hist',
-                random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=200)
+                random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=200)
             model.fit(X.iloc[tr_idx], y_log[tr_idx],
                       eval_set=[(X.iloc[val_idx], y_log[val_idx])], verbose=0)
         elif mtype == 'cb':
@@ -364,7 +364,7 @@ for mtype, mname in models_config:
                 loss_function='MAE', eval_metric='MAE',
                 iterations=5000, learning_rate=0.03, depth=7,
                 l2_leaf_reg=5.0, random_strength=1.0, bagging_temperature=1.0,
-                random_seed=SEED, verbose=0, early_stopping_rounds=200)
+                random_seed=SEED, verbose=0, early_stopping_rounds=200, thread_count=4, task_type='CPU')
             model.fit(X.iloc[tr_idx], y_log[tr_idx],
                       eval_set=(X.iloc[val_idx], y_log[val_idx]), verbose=0)
 

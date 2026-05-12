@@ -557,7 +557,7 @@ tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = lgb.LGBMRegressor(objective='mae', n_estimators=500, learning_rate=0.05,
                            num_leaves=15, max_depth=4, min_child_samples=100,
-                           random_state=SEED, verbose=-1, n_jobs=-1)
+                           random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])
@@ -573,7 +573,7 @@ tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = xgb.XGBRegressor(objective='reg:absoluteerror', n_estimators=500, learning_rate=0.05,
                           max_depth=4, min_child_weight=100, subsample=0.8, colsample_bytree=0.8,
-                          tree_method='hist', random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=50)
+                          tree_method='hist', random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=50)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])], verbose=0)
     oof[val_idx] = np.expm1(m.predict(stack_train[val_idx]))
@@ -587,7 +587,7 @@ oof = np.zeros(len(y))
 tpred = np.zeros(len(stack_test))
 for tr_idx, val_idx in folds:
     m = CatBoostRegressor(loss_function='MAE', iterations=500, learning_rate=0.05,
-                           depth=4, l2_leaf_reg=5, random_seed=SEED, verbose=0, early_stopping_rounds=50)
+                           depth=4, l2_leaf_reg=5, random_seed=SEED, verbose=0, early_stopping_rounds=50, thread_count=4, task_type='CPU')
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=(stack_train[val_idx], y_log[val_idx]), verbose=0)
     oof[val_idx] = np.expm1(m.predict(stack_train[val_idx]))

@@ -194,7 +194,7 @@ m_base = lgb.LGBMRegressor(
     num_leaves=63, max_depth=8, min_child_samples=50,
     subsample=0.7, colsample_bytree=0.7,
     reg_alpha=1.0, reg_lambda=1.0,
-    random_state=SEED, verbose=-1, n_jobs=-1)
+    random_state=SEED, verbose=-1, n_jobs=4)
 m_base.fit(train_fe[v23_feats].iloc[tr_idx], y_log[tr_idx],
            eval_set=[(train_fe[v23_feats].iloc[val_idx], y_log[val_idx])],
            callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -211,7 +211,7 @@ for nf in strategy_a_new:
         objective='mae', n_estimators=3000, learning_rate=0.03,
         num_leaves=63, max_depth=8, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7, reg_alpha=1.0, reg_lambda=1.0,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(train_fe[feats].iloc[tr_idx], y_log[tr_idx],
           eval_set=[(train_fe[feats].iloc[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -232,7 +232,7 @@ for nf in strategy_b_new:
         objective='mae', n_estimators=3000, learning_rate=0.03,
         num_leaves=63, max_depth=8, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7, reg_alpha=1.0, reg_lambda=1.0,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(train_fe[feats].iloc[tr_idx], y_log[tr_idx],
           eval_set=[(train_fe[feats].iloc[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -252,7 +252,7 @@ if all_good:
         objective='mae', n_estimators=3000, learning_rate=0.03,
         num_leaves=63, max_depth=8, min_child_samples=50,
         subsample=0.7, colsample_bytree=0.7, reg_alpha=1.0, reg_lambda=1.0,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(train_fe[final_feats].iloc[tr_idx], y_log[tr_idx],
           eval_set=[(train_fe[final_feats].iloc[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(100, verbose=False), lgb.log_evaluation(0)])
@@ -304,7 +304,7 @@ else:
                     num_leaves=63, max_depth=8, min_child_samples=50,
                     subsample=0.7, colsample_bytree=0.7,
                     reg_alpha=1.0, reg_lambda=1.0,
-                    random_state=SEED, verbose=-1, n_jobs=-1)
+                    random_state=SEED, verbose=-1, n_jobs=4)
                 model.fit(X_f[tr_idx], y_log[tr_idx],
                           eval_set=[(X_f[val_idx], y_log[val_idx])],
                           callbacks=[lgb.early_stopping(200, verbose=False), lgb.log_evaluation(0)])
@@ -313,7 +313,7 @@ else:
                     objective='reg:absoluteerror', n_estimators=5000, learning_rate=0.03,
                     max_depth=7, min_child_weight=10, subsample=0.7, colsample_bytree=0.7,
                     reg_alpha=1.0, reg_lambda=1.0, tree_method='hist',
-                    random_state=SEED, verbosity=0, n_jobs=-1, early_stopping_rounds=200)
+                    random_state=SEED, verbosity=0, n_jobs=4, early_stopping_rounds=200)
                 model.fit(X_f[tr_idx], y_log[tr_idx],
                           eval_set=[(X_f[val_idx], y_log[val_idx])], verbose=0)
             elif mtype == 'cb':
@@ -321,7 +321,7 @@ else:
                     loss_function='MAE', eval_metric='MAE',
                     iterations=5000, learning_rate=0.03, depth=7,
                     l2_leaf_reg=5.0, random_strength=1.0, bagging_temperature=1.0,
-                    random_seed=SEED, verbose=0, early_stopping_rounds=200)
+                    random_seed=SEED, verbose=0, early_stopping_rounds=200, thread_count=4, task_type='CPU')
                 model.fit(X_f[tr_idx], y_log[tr_idx],
                           eval_set=(X_f[val_idx], y_log[val_idx]), verbose=0)
 
@@ -508,7 +508,7 @@ for tr_idx, val_idx in folds:
     m = lgb.LGBMRegressor(
         objective='mae', n_estimators=500, learning_rate=0.05,
         num_leaves=15, max_depth=4, min_child_samples=100,
-        random_state=SEED, verbose=-1, n_jobs=-1)
+        random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])

@@ -51,7 +51,7 @@ PARAMS = dict(
     num_leaves=63, max_depth=8, min_child_samples=50,
     subsample=0.7, colsample_bytree=0.7,
     reg_alpha=1.0, reg_lambda=1.0,
-    random_state=42, verbose=-1, n_jobs=-1,
+    random_state=42, verbose=-1, n_jobs=4,
 )
 
 

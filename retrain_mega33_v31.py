@@ -129,7 +129,7 @@ oof = np.zeros(n_train); tpred = np.zeros(n_test)
 for tr_idx, val_idx in folds:
     m = lgb.LGBMRegressor(objective='mae', n_estimators=500, learning_rate=0.05,
                            num_leaves=15, max_depth=4, min_child_samples=100,
-                           random_state=SEED, verbose=-1, n_jobs=-1)
+                           random_state=SEED, verbose=-1, n_jobs=4)
     m.fit(stack_train[tr_idx], y_log[tr_idx],
           eval_set=[(stack_train[val_idx], y_log[val_idx])],
           callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])

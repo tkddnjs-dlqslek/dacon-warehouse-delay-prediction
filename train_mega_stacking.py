@@ -144,7 +144,7 @@ for config_name, params in lgb_configs:
     for fold_idx, (tr_idx, val_idx) in enumerate(folds):
         m = lgb.LGBMRegressor(
             objective='mae', n_estimators=500, learning_rate=0.05,
-            **params, random_state=SEED, verbose=-1, n_jobs=-1)
+            **params, random_state=SEED, verbose=-1, n_jobs=4)
         m.fit(stack_train[tr_idx], y_log[tr_idx],
               eval_set=[(stack_train[val_idx], y_log[val_idx])],
               callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])
